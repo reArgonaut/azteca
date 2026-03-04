@@ -1,0 +1,159 @@
+<div class="container py-4">
+
+  <!-- Header -->
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+      <h2 class="fw-bold mb-0">
+        {{ levelInfo.icon }} ¡Hola, {{ student.nickname }}!
+      </h2>
+      <small class="text-muted">{{ student.group }} · {{ today }}</small>
+    </div>
+    <span class="badge bg-success fs-6 px-3 py-2">
+      {{ student.totalCarbonos }} Carbonos totales
+    </span>
+  </div>
+
+  <!-- Balance cards -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-4">
+      <div class="card text-center border-0 shadow-sm h-100 border-start border-success border-4">
+        <div class="card-body py-3">
+          <div class="fs-4">🌱</div>
+          <div class="fw-bold text-success fs-3">{{ earned }}</div>
+          <small class="text-muted">Carbonos ganados hoy</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card text-center border-0 shadow-sm h-100 border-start border-danger border-4">
+        <div class="card-body py-3">
+          <div class="fs-4">🔥</div>
+          <div class="fw-bold text-danger fs-3">{{ consumed }}</div>
+          <small class="text-muted">Carbonos consumidos hoy</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card text-center border-0 shadow-sm h-100"
+           [class.border-start]="true"
+           [class.border-4]="true"
+           [class.border-success]="balance >= 0"
+           [class.border-danger]="balance < 0">
+        <div class="card-body py-3">
+          <div class="fs-4">⚖️</div>
+          <div class="fw-bold fs-3" [class.text-success]="balance >= 0"
+               [class.text-danger]="balance < 0">
+            {{ balance > 0 ? '+' : '' }}{{ balance }}
+          </div>
+          <small class="text-muted">Balance del día</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick actions -->
+  <div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-light d-flex justify-content-between align-items-center">
+      <span class="fw-bold">⚡ Acciones rápidas</span>
+      <span class="badge bg-secondary">{{ quickCount }}/{{ maxQuick }} usadas hoy</span>
+    </div>
+    <div class="card-body">
+      <p class="text-muted small mb-3">
+        Máximo {{ maxQuick }} por día. No requieren evidencia, se aprueban automáticamente.
+      </p>
+      <div class="row g-2">
+        @for (qa of quickActions; track qa.id) {
+          <div class="col-md-4">
+            <button class="btn w-100 py-3 fw-semibold"
+                    [class.btn-success]="canDoQuick(qa.id)"
+                    [class.btn-outline-secondary]="!canDoQuick(qa.id)"
+                    [disabled]="!canDoQuick(qa.id)"
+                    (click)="doQuickAction(qa)">
+              <div class="fs-3">{{ qa.icon }}</div>
+              <div class="small mt-1">{{ qa.title }}</div>
+              <div class="badge bg-light text-success mt-1">+{{ qa.carbonos }} C</div>
+            </button>
+          </div>
+        }
+      </div>
+      @if (quickLimitReached) {
+        <div class="alert alert-warning mt-3 py-2 mb-0">
+          ⚠️ Ya usaste tus {{ maxQuick }} acciones rápidas de hoy.
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Evidence actions -->
+  <div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-light">
+      <span class="fw-bold">📋 Acciones con evidencia</span>
+    </div>
+    <div class="card-body">
+      <p class="text-muted small mb-3">
+        Requieren validación del docente. Quedan en estado <em>Pendiente</em> hasta ser aprobadas.
+      </p>
+
+      @if (evidenceSuccess) {
+        <div class="alert alert-success py-2">{{ evidenceSuccess }}</div>
+      }
+      @if (evidenceError) {
+        <div class="alert alert-danger py-2">{{ evidenceError }}</div>
+      }
+
+      <div class="row g-3">
+        <div class="col-md-5">
+          <label class="form-label fw-semibold">Tipo de acción</label>
+          <select class="form-select" [(ngModel)]="selectedEvidence">
+            <option value="">-- Selecciona --</option>
+            @for (ea of evidenceActions; track ea.id) {
+              <option [value]="ea.id">
+                {{ ea.icon }} {{ ea.title }} (+{{ ea.carbonos }} C)
+              </option>
+            }
+          </select>
+        </div>
+        <div class="col-md-5">
+          <label class="form-label fw-semibold">Descripción de la evidencia</label>
+          <textarea class="form-control" [(ngModel)]="evidenceText"
+                    rows="2" placeholder="Describe brevemente tu acción..."></textarea>
+        </div>
+        <div class="col-md-2 d-flex align-items-end">
+          <button class="btn btn-primary w-100" (click)="submitEvidence()">
+            Enviar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Today's action history -->
+  @if (todayActions.length > 0) {
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-light">
+        <span class="fw-bold">📝 Mis acciones de hoy</span>
+      </div>
+      <ul class="list-group list-group-flush">
+        @for (a of todayActions; track a.id) {
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <div>
+              <span class="fw-semibold">{{ a.title }}</span>
+              <br>
+              @if (a.evidence) {
+                <small class="text-muted">{{ a.evidence }}</small>
+              }
+            </div>
+            <div class="text-end">
+              <span class="badge" [class]="'bg-' + statusBadge(a.status)">
+                {{ statusLabel(a.status) }}
+              </span>
+              <br>
+              <small class="text-success fw-bold">+{{ a.carbonos }} C</small>
+            </div>
+          </li>
+        }
+      </ul>
+    </div>
+  }
+
+</div>

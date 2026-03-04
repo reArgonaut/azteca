@@ -1,0 +1,100 @@
+<div class="min-vh-100 d-flex align-items-center justify-content-center eco-bg py-5">
+  <div class="container" style="max-width: 520px;">
+
+    <!-- Header -->
+    <div class="text-center mb-4">
+      <div class="display-1">🌿</div>
+      <h1 class="fw-bold text-success">EcoAzteca</h1>
+      <p class="text-muted">Simulador de Impacto Ecológico</p>
+    </div>
+
+    <!-- Registration card -->
+    <div class="card shadow border-0">
+      <div class="card-header bg-success text-white text-center py-3">
+        <h5 class="mb-0 fw-bold">🎓 Registro de Estudiante</h5>
+      </div>
+      <div class="card-body p-4">
+
+        @if (error) {
+          <div class="alert alert-danger py-2">{{ error }}</div>
+        }
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Nickname</label>
+          <input type="text" class="form-control" [(ngModel)]="nickname"
+                 placeholder="Ej: EcoMaria" maxlength="20">
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Grupo o salón</label>
+          <input type="text" class="form-control" [(ngModel)]="group"
+                 placeholder="Ej: Grupo A, 3B, Ambiental 101" maxlength="30">
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Método de transporte</label>
+          <select class="form-select" [(ngModel)]="transport">
+            @for (opt of transportOptions; track opt.value) {
+              <option [value]="opt.value">{{ opt.label }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label fw-semibold">
+            Tiempo de traslado (minutos): <strong>{{ travelTime }} min</strong>
+          </label>
+          <input type="range" class="form-range" [(ngModel)]="travelTime"
+                 min="0" max="120" step="5">
+          <div class="d-flex justify-content-between text-muted small">
+            <span>0 min</span><span>60 min</span><span>120 min</span>
+          </div>
+        </div>
+
+        <!-- Transport cost preview -->
+        <div class="alert alert-light border d-flex justify-content-between align-items-center py-2">
+          <span class="text-muted small">Costo de traslado diario</span>
+          <span class="fw-bold text-danger fs-5">{{ transportCost }} Carbonos</span>
+        </div>
+
+        <div class="d-grid mt-3">
+          <button class="btn btn-success btn-lg fw-bold" (click)="register()">
+            🌱 Registrarme
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Existing students (demo login) -->
+    @if (existingStudents.length > 0) {
+      <div class="card shadow border-0 mt-4">
+        <div class="card-header bg-light text-center py-2">
+          <small class="text-muted fw-semibold">👥 Usuarios registrados — Clic para ingresar</small>
+        </div>
+        <ul class="list-group list-group-flush">
+          @for (s of existingStudents; track s.id) {
+            <li class="list-group-item d-flex justify-content-between align-items-center
+                        list-group-item-action" style="cursor:pointer"
+                (click)="loginAs(s)">
+              <span>
+                <strong>{{ s.nickname }}</strong>
+                <small class="text-muted ms-2">{{ s.group }}</small>
+              </span>
+              <span class="badge bg-success rounded-pill">
+                {{ s.totalCarbonos }} C
+              </span>
+            </li>
+          }
+        </ul>
+      </div>
+    }
+
+    <!-- Teacher access -->
+    <div class="text-center mt-3">
+      <a routerLink="/teacher" class="text-muted small">
+        📋 Acceso Docente
+      </a>
+    </div>
+
+  </div>
+</div>

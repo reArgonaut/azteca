@@ -1,1 +1,52 @@
-/* You can add global styles to this file, and also import other style files */
+/* ── styles.css — Estilos globales de EcoAzteca ──────────────────────────── */
+
+body {
+  background-color: #f8fdf8;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+/* Smooth transitions for all cards */
+.card {
+  transition: box-shadow 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Eco background for register page */
+.eco-bg {
+  background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 50%, #e3f2fd 100%);
+}
+
+/* Ensure min-height for teacher gate */
+.min-vh-75 {
+  min-height: 75vh;
+}
+
+/* Quick action buttons */
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Progress bar animation */
+.progress-bar {
+  transition: width 0.6s ease;
+}
+
+/* Navbar active link */
+.nav-link.active {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+}
+
+/* Table row hover */
+.list-group-item-action:hover {
+  background-color: #f0fdf4;
+}
+
+/* Rank table gold highlight */
+.table-warning {
+  background-color: #fff9e6 !important;
+}

@@ -1,0 +1,79 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-success shadow-sm">
+  <div class="container-fluid px-3">
+
+    <!-- Brand -->
+    <a class="navbar-brand fw-bold fs-5" routerLink="/dashboard">
+      🌿 EcoAzteca
+    </a>
+
+    <button class="navbar-toggler" type="button"
+            data-bs-toggle="collapse" data-bs-target="#mainNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="mainNav">
+
+      <!-- Student links -->
+      @if (student) {
+        <ul class="navbar-nav me-auto gap-1">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/dashboard" routerLinkActive="active">
+              🏠 Hoy
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/balance" routerLinkActive="active">
+              ⚖️ Balance
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/ranking" routerLinkActive="active">
+              🏆 Ranking
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/viral" routerLinkActive="active">
+              🎵 TikTok
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/profile" routerLinkActive="active">
+              👤 Perfil
+            </a>
+          </li>
+        </ul>
+      }
+
+      <!-- Teacher + no-user links -->
+      @if (!student) {
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/ranking" routerLinkActive="active">
+              🏆 Ranking
+            </a>
+          </li>
+        </ul>
+      }
+
+      <!-- Right side -->
+      <div class="d-flex align-items-center gap-2">
+        <a class="btn btn-outline-light btn-sm" routerLink="/teacher">
+          📋 Docente
+        </a>
+
+        @if (student && level) {
+          <span class="badge bg-light text-success fw-bold">
+            {{ level.icon }} {{ student.nickname }}
+          </span>
+          <span class="badge bg-warning text-dark">
+            {{ student.totalCarbonos }} C
+          </span>
+          <button class="btn btn-outline-light btn-sm" (click)="logout()">
+            Salir
+          </button>
+        }
+      </div>
+
+    </div>
+  </div>
+</nav>

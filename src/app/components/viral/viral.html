@@ -1,0 +1,98 @@
+<div class="container py-4" style="max-width: 720px;">
+
+  <div class="text-center mb-4">
+    <h2 class="fw-bold">🎵 TikTok Ambiental</h2>
+    <p class="text-muted">
+      Publica contenido ecológico en TikTok y gana
+      <strong class="text-success">{{ baseCarbonos }} Carbonos</strong> base + bonus del docente.
+    </p>
+  </div>
+
+  <!-- Submit form -->
+  <div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-dark text-white fw-bold">
+      🎬 Publicar contenido
+    </div>
+    <div class="card-body p-4">
+
+      @if (success) {
+        <div class="alert alert-success">{{ success }}</div>
+      }
+      @if (error) {
+        <div class="alert alert-danger">{{ error }}</div>
+      }
+
+      <div class="mb-3">
+        <label class="form-label fw-semibold">🔗 Link de TikTok</label>
+        <input type="url" class="form-control" [(ngModel)]="tiktokLink"
+               placeholder="https://tiktok.com/@usuario/video/...">
+        <small class="text-muted">Pega el link público de tu video</small>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-semibold">📂 Categoría</label>
+        <select class="form-select" [(ngModel)]="category">
+          <option value="">-- Selecciona --</option>
+          @for (cat of categories; track cat) {
+            <option [value]="cat">{{ cat }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="mb-4">
+        <label class="form-label fw-semibold">📝 Descripción del contenido</label>
+        <textarea class="form-control" [(ngModel)]="description" rows="3"
+                  placeholder="¿De qué trata tu TikTok? ¿Qué mensaje ecológico transmite?"></textarea>
+      </div>
+
+      <div class="d-flex align-items-center justify-content-between">
+        <div class="text-muted small">
+          ⏳ Estado inicial: <strong>Pendiente de validación</strong>
+        </div>
+        <button class="btn btn-dark fw-bold px-4" (click)="submit()">
+          🎵 Publicar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- My posts -->
+  <div class="card border-0 shadow-sm">
+    <div class="card-header bg-light fw-bold">📋 Mis publicaciones</div>
+
+    @if (myPosts.length === 0) {
+      <div class="card-body text-center text-muted py-4">
+        Aún no has publicado contenido viral.
+      </div>
+    } @else {
+      <ul class="list-group list-group-flush">
+        @for (post of myPosts; track post.id) {
+          <li class="list-group-item">
+            <div class="d-flex justify-content-between align-items-start">
+              <div class="flex-grow-1">
+                <div class="fw-bold">{{ post.title }}</div>
+                @if (post.description) {
+                  <div class="text-muted small mt-1">{{ post.description }}</div>
+                }
+                @if (post.tiktokLink) {
+                  <a [href]="post.tiktokLink" target="_blank"
+                     class="small text-decoration-none text-primary mt-1 d-block">
+                    🔗 Ver TikTok
+                  </a>
+                }
+                <small class="text-muted">{{ post.date }}</small>
+              </div>
+              <div class="text-end ms-3 flex-shrink-0">
+                <span class="badge" [class]="'bg-' + statusBadge(post.status)">
+                  {{ statusLabel(post.status) }}
+                </span>
+                <div class="text-success fw-bold mt-1">+{{ post.carbonos }} C</div>
+              </div>
+            </div>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+
+</div>

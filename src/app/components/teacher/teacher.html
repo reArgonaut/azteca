@@ -1,0 +1,163 @@
+<div class="container py-4">
+
+  <!-- Password gate -->
+  @if (!authenticated) {
+    <div class="d-flex align-items-center justify-content-center min-vh-75">
+      <div class="card border-0 shadow" style="max-width:400px; width:100%">
+        <div class="card-header bg-dark text-white text-center py-3">
+          <h5 class="mb-0">📋 Panel Docente</h5>
+        </div>
+        <div class="card-body p-4">
+          <p class="text-muted text-center mb-4">
+            Ingresa la contraseña del docente para acceder.
+          </p>
+
+          @if (passwordError) {
+            <div class="alert alert-danger py-2">{{ passwordError }}</div>
+          }
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Contraseña</label>
+            <input type="password" class="form-control" [(ngModel)]="password"
+                   placeholder="Contraseña del docente"
+                   (keyup.enter)="login()">
+          </div>
+
+          <div class="d-grid">
+            <button class="btn btn-dark fw-bold" (click)="login()">
+              🔐 Ingresar
+            </button>
+          </div>
+
+          <div class="text-center mt-3">
+            <small class="text-muted">
+              🔑 Hint para demo: <code>azteca2025</code>
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Teacher panel -->
+  @if (authenticated) {
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h2 class="fw-bold mb-0">📋 Panel Docente</h2>
+        <small class="text-muted">Valida acciones y contenido de los estudiantes</small>
+      </div>
+      <div class="d-flex gap-2">
+        <span class="badge bg-warning text-dark fs-6">
+          {{ pendingActions.length }} pendiente(s)
+        </span>
+        <button class="btn btn-outline-danger btn-sm" (click)="logout()">
+          Cerrar sesión
+        </button>
+      </div>
+    </div>
+
+    @if (feedbackMsg) {
+      <div class="alert alert-info py-2">{{ feedbackMsg }}</div>
+    }
+
+    <!-- Pending actions list -->
+    @if (pendingActions.length === 0) {
+      <div class="card border-0 shadow-sm">
+        <div class="card-body text-center py-5 text-muted">
+          <div class="fs-1">✅</div>
+          <p class="mt-2">No hay acciones pendientes. ¡Todo al día!</p>
+        </div>
+      </div>
+    } @else {
+      <div class="row g-3">
+        @for (action of pendingActions; track action.id) {
+          <div class="col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+              <div class="card-header d-flex justify-content-between align-items-center py-2">
+                <span class="badge" [class]="'bg-' + typeBadge(action.type)">
+                  {{ typeLabel(action.type) }}
+                </span>
+                <small class="text-muted">{{ action.date }}</small>
+              </div>
+              <div class="card-body">
+                <h6 class="fw-bold mb-1">{{ action.title }}</h6>
+                <p class="text-muted small mb-2">
+                  👤 <strong>{{ action.studentNickname }}</strong> — {{ action.studentGroup }}
+                </p>
+
+                @if (action.evidence) {
+                  <div class="bg-light rounded p-2 mb-2">
+                    <small class="text-muted fw-semibold">Evidencia:</small>
+                    <p class="mb-0 small">{{ action.evidence }}</p>
+                  </div>
+                }
+
+                @if (action.tiktokLink) {
+                  <div class="mb-2">
+                    <a [href]="action.tiktokLink" target="_blank"
+                       class="btn btn-sm btn-outline-dark">
+                      🔗 Ver TikTok
+                    </a>
+                    @if (action.description) {
+                      <p class="small text-muted mt-1 mb-0">{{ action.description }}</p>
+                    }
+                  </div>
+                }
+
+                <div class="d-flex align-items-center gap-2 mt-2">
+                  <span class="text-success fw-bold small">+{{ action.carbonos }} C base</span>
+                  @if (action.type === 'viral') {
+                    <div class="d-flex align-items-center gap-1">
+                      <label class="form-label mb-0 small">Bonus:</label>
+                      <input type="number" class="form-control form-control-sm"
+                             [(ngModel)]="bonusMap[action.id]"
+                             min="0" max="100" style="width:70px" placeholder="0">
+                      <small class="text-muted">C</small>
+                    </div>
+                  }
+                </div>
+              </div>
+              <div class="card-footer bg-transparent d-flex gap-2">
+                <button class="btn btn-success flex-fill fw-bold" (click)="approve(action)">
+                  ✅ Aprobar
+                </button>
+                <button class="btn btn-danger flex-fill" (click)="reject(action)">
+                  ❌ Rechazar
+                </button>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Students overview -->
+    <div class="card border-0 shadow-sm mt-4">
+      <div class="card-header bg-light fw-bold">👥 Resumen de estudiantes</div>
+      <div class="table-responsive">
+        <table class="table table-sm align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Estudiante</th>
+              <th>Grupo</th>
+              <th>Transporte</th>
+              <th class="text-end">Total Carbonos</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (s of allStudents(); track s.id) {
+              <tr>
+                <td class="fw-semibold">{{ s.nickname }}</td>
+                <td>{{ s.group }}</td>
+                <td><small class="text-muted">{{ s.travelTime }} min</small></td>
+                <td class="text-end fw-bold text-success">{{ s.totalCarbonos }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  }
+
+</div>

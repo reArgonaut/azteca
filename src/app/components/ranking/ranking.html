@@ -1,0 +1,91 @@
+<div class="container py-4" style="max-width: 720px;">
+
+  <div class="text-center mb-4">
+    <h2 class="fw-bold">🏆 Ranking por Grupo</h2>
+    <p class="text-muted">Competencia sana entre grupos. Suma de carbonos de todos los integrantes.</p>
+  </div>
+
+  @if (ranking.length === 0) {
+    <div class="text-center py-5 text-muted">
+      <div class="fs-1">📊</div>
+      <p>Aún no hay estudiantes registrados.</p>
+    </div>
+  } @else {
+
+    <!-- Podium top 3 -->
+    @if (ranking.length >= 1) {
+      <div class="row g-3 justify-content-center mb-4">
+        @if (ranking.length >= 2) {
+          <div class="col-md-3 text-center mt-4">
+            <div class="card border-0 shadow-sm">
+              <div class="card-body py-3">
+                <div class="fs-2">🥈</div>
+                <div class="fw-bold">{{ ranking[1].group }}</div>
+                <div class="text-muted small">{{ ranking[1].studentCount }} estudiante(s)</div>
+                <div class="text-primary fw-bold fs-5">{{ ranking[1].totalCarbonos }} C</div>
+              </div>
+            </div>
+          </div>
+        }
+        <div class="col-md-4 text-center">
+          <div class="card border-0 shadow bg-warning bg-opacity-10">
+            <div class="card-body py-3">
+              <div class="fs-1">🥇</div>
+              <div class="fw-bold fs-5">{{ ranking[0].group }}</div>
+              <div class="text-muted small">{{ ranking[0].studentCount }} estudiante(s)</div>
+              <div class="text-warning fw-bold fs-4">{{ ranking[0].totalCarbonos }} C</div>
+            </div>
+          </div>
+        </div>
+        @if (ranking.length >= 3) {
+          <div class="col-md-3 text-center mt-4">
+            <div class="card border-0 shadow-sm">
+              <div class="card-body py-3">
+                <div class="fs-2">🥉</div>
+                <div class="fw-bold">{{ ranking[2].group }}</div>
+                <div class="text-muted small">{{ ranking[2].studentCount }} estudiante(s)</div>
+                <div class="text-secondary fw-bold fs-5">{{ ranking[2].totalCarbonos }} C</div>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Full table -->
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-success text-white fw-bold">📋 Tabla completa</div>
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Posición</th>
+              <th>Grupo</th>
+              <th class="text-center">Estudiantes</th>
+              <th class="text-end">Carbonos Acumulados</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (entry of ranking; track entry.group) {
+              <tr [class]="rowClass(entry.position, entry.group)">
+                <td class="fw-bold fs-5">{{ medal(entry.position) }}</td>
+                <td>
+                  <span class="fw-bold">{{ entry.group }}</span>
+                  @if (entry.group === currentGroup) {
+                    <span class="badge bg-success ms-2">Tu grupo</span>
+                  }
+                </td>
+                <td class="text-center text-muted">{{ entry.studentCount }}</td>
+                <td class="text-end">
+                  <span class="fw-bold text-success fs-5">{{ entry.totalCarbonos }}</span>
+                  <small class="text-muted ms-1">C</small>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  }
+</div>

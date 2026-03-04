@@ -1,0 +1,116 @@
+<div class="container py-4" style="max-width:640px;">
+
+  <div class="d-flex align-items-center mb-4">
+    <div>
+      <h2 class="fw-bold mb-0">⚖️ Balance Ambiental</h2>
+      <small class="text-muted">Resumen privado de tu día · {{ today }}</small>
+    </div>
+    <span class="ms-auto badge bg-secondary fs-6">🔒 Privado</span>
+  </div>
+
+  <!-- Main balance card -->
+  <div class="card border-0 shadow mb-4"
+       [class.border-success]="!isNegative"
+       [class.border-danger]="isNegative"
+       style="border-left-width:5px!important; border-left-style:solid!important">
+    <div class="card-body py-4 text-center">
+      <div class="fs-1 mb-2">{{ isNegative ? '⚠️' : '🌿' }}</div>
+      <div class="fs-1 fw-bold"
+           [class.text-success]="!isNegative"
+           [class.text-danger]="isNegative">
+        {{ balance > 0 ? '+' : '' }}{{ balance }}
+        <small class="fs-5 fw-normal"> Carbonos</small>
+      </div>
+      <p class="text-muted mt-2 mb-0">Balance del día</p>
+    </div>
+  </div>
+
+  <!-- Message -->
+  @if (isNegative) {
+    <div class="alert alert-warning border-0 shadow-sm">
+      <strong>⚠️ Hoy consumiste más recursos de los que compensaste.</strong>
+      <p class="mb-0 mt-1 small">
+        ¡No te rindas! Mañana tienes una nueva oportunidad de compensar tu huella ecológica.
+      </p>
+    </div>
+  } @else if (isPositive) {
+    <div class="alert alert-success border-0 shadow-sm">
+      <strong>🎉 ¡Excelente! Hoy compensaste más de lo que consumiste.</strong>
+      <p class="mb-0 mt-1 small">
+        Tu impacto positivo contribuye al bienestar del planeta. ¡Sigue así!
+      </p>
+    </div>
+  } @else {
+    <div class="alert alert-info border-0 shadow-sm">
+      <strong>😊 Balance neutro: compensaste exactamente lo que consumiste.</strong>
+    </div>
+  }
+
+  <!-- Breakdown -->
+  <div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-light fw-bold">📊 Desglose del día</div>
+    <div class="card-body">
+
+      <!-- Formula -->
+      <div class="text-center py-3 bg-light rounded mb-3 font-monospace">
+        <span class="text-success fw-bold fs-5">{{ earned }}</span>
+        <span class="text-muted mx-2">−</span>
+        <span class="text-muted">({{ baseConsumption }} + {{ student.transportCost }})</span>
+        <span class="text-muted mx-2">=</span>
+        <span class="fw-bold fs-5"
+              [class.text-success]="!isNegative"
+              [class.text-danger]="isNegative">
+          {{ balance }}
+        </span>
+      </div>
+
+      <table class="table table-borderless mb-0">
+        <tbody>
+          <tr>
+            <td class="text-muted">🌱 Carbonos ganados</td>
+            <td class="text-end fw-bold text-success">+{{ earned }}</td>
+          </tr>
+          <tr>
+            <td class="text-muted">🏠 Consumo base diario</td>
+            <td class="text-end fw-bold text-danger">−{{ baseConsumption }}</td>
+          </tr>
+          <tr>
+            <td class="text-muted">
+              🚗 Costo de traslado
+              <small class="text-muted">({{ student.travelTime }} min)</small>
+            </td>
+            <td class="text-end fw-bold text-danger">−{{ student.transportCost }}</td>
+          </tr>
+          <tr class="border-top">
+            <td class="fw-bold">Balance final</td>
+            <td class="text-end fw-bold fs-5"
+                [class.text-success]="!isNegative"
+                [class.text-danger]="isNegative">
+              {{ balance > 0 ? '+' : '' }}{{ balance }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Approved actions today -->
+  @if (todayActions.length > 0) {
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-light fw-bold">✅ Acciones aprobadas hoy</div>
+      <ul class="list-group list-group-flush">
+        @for (a of todayActions; track a.id) {
+          <li class="list-group-item d-flex justify-content-between">
+            <span>{{ a.title }}</span>
+            <span class="text-success fw-bold">+{{ a.carbonos }} C</span>
+          </li>
+        }
+      </ul>
+    </div>
+  } @else {
+    <div class="text-center text-muted py-3">
+      <p>Aún no tienes acciones aprobadas hoy.</p>
+    </div>
+  }
+
+</div>

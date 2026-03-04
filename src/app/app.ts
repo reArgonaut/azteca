@@ -1,12 +1,21 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { NavbarComponent } from './components/navbar/navbar';
+import { seedDemoData } from './data/seed';
+import { StorageService } from './services/storage.service';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  standalone: true,
+  imports: [RouterOutlet, NavbarComponent],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  styleUrl: './app.css',
 })
-export class App {
-  protected title = 'azteca';
+export class App implements OnInit {
+  constructor(private storage: StorageService) {}
+
+  ngOnInit(): void {
+    // Populate demo data on first load
+    seedDemoData(this.storage);
+  }
 }
