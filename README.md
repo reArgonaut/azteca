@@ -1,59 +1,58 @@
-# Azteca
+# Guardianes del Equilibrio — Simulador de Impacto Ecológico
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.0.0.
+App Angular 20 demo para presentación ante jurado. Los estudiantes acumulan/pierden **"Carbonos"** (moneda virtual) según sus acciones ecológicas diarias.
 
-## Development server
+## Stack
 
-To start a local development server, run:
+- **Angular 20** — standalone components, new control flow (`@if`, `@for`)
+- **Bootstrap 5** — via CDN en `src/index.html` (sin npm)
+- **localStorage** — persistencia, sin backend
 
-```bash
-ng serve
-```
-
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Comandos
 
 ```bash
-ng generate component component-name
+npx ng serve          # dev server → http://localhost:4200
+npx ng build --configuration development   # build
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Rutas
 
-```bash
-ng generate --help
+| Ruta | Descripción | Guard |
+|------|-------------|-------|
+| `/register` | Registro de nuevo usuario + lista de existentes | — |
+| `/dashboard` | Acciones del día (rápidas + evidencias) | auth |
+| `/balance` | Desglose diario de carbonos | auth |
+| `/ranking` | Tabla de ranking grupal (pública) | — |
+| `/viral` | Envío de contenido TikTok | auth |
+| `/teacher` | Panel de validación docente | — |
+| `/profile` | Perfil ecológico + historial | auth |
+
+**Contraseña del panel docente:** `azteca2025`
+
+## Arquitectura de archivos clave
+
+```
+src/app/
+├── models/models.ts        # Interfaces: Student, Action, AppState, EcoLevel
+├── data/data.ts            # Reglas del juego: transporte, niveles, acciones
+├── data/seed.ts            # Datos demo (corre una vez al primer load)
+├── services/
+│   ├── storage.service.ts  # Lectura/escritura en localStorage
+│   └── engine.service.ts   # Cálculo de carbonos, transporte, niveles
+└── guards/auth.guard.ts    # Redirige a /register si no hay usuario activo
 ```
 
-## Building
+## Datos demo pre-cargados
 
-To build the project run:
+| Alumno | Grupo |
+|--------|-------|
+| EcoMaria | Grupo A |
+| CarlosVerde | Grupo B |
+| AnaEco | Grupo A |
 
-```bash
-ng build
-```
+3 acciones pendientes de validación en el panel docente.
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+## Notas de desarrollo
 
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- Los servicios Angular inyectados como `private` **no son accesibles desde templates** — usar `protected` o exponer propiedades computed.
+- No hay backend ni autenticación real; todo vive en `localStorage`.
